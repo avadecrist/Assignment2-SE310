@@ -1,4 +1,8 @@
 package com.se310.store.model;
+// added for strategy pattern
+import com.se310.store.strategy.InventoryUpdateStrategy;
+import com.se310.store.strategy.StandardInventoryUpdateStrategy;
+import com.se310.store.strategy.FlexibleInventoryUpdateStrategy;
 
 /**
  * Inventory class implementation representing inventory on the shelf of the store
@@ -15,6 +19,8 @@ public class Inventory {
     private int count;
     private String productId;
     private InventoryType type;
+    // added for strategy pattern
+    private InventoryUpdateStrategy strategy;
 
     /**
      * Constructor for the Inventory class
@@ -32,6 +38,12 @@ public class Inventory {
         this.count = count;
         this.productId = productId;
         this.type = type;
+        // set strategy based on inventory type
+        if (type == InventoryType.standard) {
+            this.strategy = new StandardInventoryUpdateStrategy();
+        } else if (type == InventoryType.flexible) {
+            this.strategy = new FlexibleInventoryUpdateStrategy();
+        }
     }
 
     /**
@@ -115,6 +127,20 @@ public class Inventory {
     }
 
     /**
+     * Executes the update using whatever strategy is configured
+     * @param addedCount
+     */
+    public void executeStrategy(int addedCount) throws StoreException {
+        if (strategy == null) {
+            throw new StoreException(
+                "executeStrategy",
+                "No InventoryUpdateStrategy configured for this inventory."
+            );
+        }
+        strategy.updateQuantity(this, addedCount);
+    }
+
+    /**
      * Method for updating (incrementing or decrementing) Inventory on the shelf of the store.
      * Throws StoreException if count does not stay within allowable bounds.
      * Method is synchronized to avoid a race condition
@@ -123,12 +149,15 @@ public class Inventory {
      */
     synchronized public void updateInventory(int count) throws StoreException {
 
-        //Check to see if count within proper bounds
-        if(count < 0 || (this.count + count) > capacity)
-            throw new StoreException("Update Inventory", "Inventory Is Smaller Than O " +
-                    "or Larger Than Shelf Capacity");
+        this.executeStrategy(count);
+        
 
-        this.count = this.count + count;
+// HAD THIS BEFORE STRATEGY PATTERN IMPLEMENTATION
+        // if(count < 0 || (this.count + count) > capacity)
+        //     throw new StoreException("Update Inventory", "Inventory Is Smaller Than O " +
+        //             "or Larger Than Shelf Capacity");
+
+        // this.count = this.count + count;
     }
 
     /**
