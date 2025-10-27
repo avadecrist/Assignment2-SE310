@@ -13,7 +13,7 @@ public class StandardInventoryUpdateStrategy implements InventoryUpdateStrategy 
     //TODO: Implement Strategy Pattern making sure inventory stays in the acceptable bounds for standard products
 
     @Override
-    public void updateQuantity(Inventory inventory, int newCount) throws StoreException {
+    public void updateQuantity(Inventory inventory, int addedCount) throws StoreException {
         if (inventory == null) {
             throw new StoreException(
                 "updateQuantity",
@@ -30,24 +30,26 @@ public class StandardInventoryUpdateStrategy implements InventoryUpdateStrategy 
             );
         }
 
-        // Business rule checks
         int capacity = inventory.getCapacity();
+        int currentCount = inventory.getCount();
+        int updatedCount = currentCount + addedCount;
 
-        if (newCount < 0) {
+        // Business rule checks
+        if (updatedCount < 0) {
             throw new StoreException(
                 "updateQuantity",
                 "Inventory count cannot be negative."
             );
         }
 
-        if (newCount > capacity) {
+        if (updatedCount > capacity) {
             throw new StoreException(
                 "updateQuantity",
-                "Inventory count %d exceeds capacity for STANDARD inventory."
+                "Inventory count exceeds capacity for STANDARD inventory."
             );
         }
 
         // Update the inventory count since all checks passed
-        inventory.setCount(newCount);
+        inventory.setCount(updatedCount);
     }
 }

@@ -202,7 +202,7 @@ public class StoreService {
             throw new StoreException("Update Inventory", "Inventory Does Not Exist");
 
         //Update Inventory count
-        inventory.updateInventory(count);
+        inventory.updateInventory(count); 
 
         return inventory;
     }

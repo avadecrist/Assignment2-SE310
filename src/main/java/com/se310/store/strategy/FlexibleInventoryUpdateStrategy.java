@@ -18,7 +18,7 @@ public class FlexibleInventoryUpdateStrategy implements InventoryUpdateStrategy 
     //TODO: Implement Strategy Pattern allowing 20% overcapacity for flexible inventory
     
     @Override
-    public void updateQuantity(Inventory inventory, int newCount) throws StoreException {
+    public void updateQuantity(Inventory inventory, int addedCount) throws StoreException {
         if (inventory == null) {
             throw new StoreException(
                 "updateQuantity",
@@ -35,29 +35,28 @@ public class FlexibleInventoryUpdateStrategy implements InventoryUpdateStrategy 
             );
         }
 
-        int capacity = inventory.getCapacity();
+    
+        double flexibleCapacity = inventory.getCapacity() * 1.2; 
+        //int capacity = inventory.setCapacity(flexibleCapacity);
+        int currentCount = inventory.getCount();
+        int updatedCount = currentCount + addedCount;
 
-        if (newCount < 0) {
+        if (updatedCount < 0) {
             throw new StoreException(
                 "updateQuantity",
                 "Inventory count cannot be negative."
             );
         }
 
-        // Calculate 120% of capacity (20% overcapacity)
-        double allowedMax = capacity * 1.2;
 
-        if (newCount > allowedMax) {
+        if (updatedCount > flexibleCapacity) {
             throw new StoreException(
                 "updateQuantity",
-                String.format(
-                    "Inventory count %d exceeds flexible capacity limit (max %.0f).",
-                    newCount, allowedMax
-                )
+                "Inventory count exceeds flexible capacity limit."
             );
         }
 
         // Update the inventory count since all checks passed
-        inventory.setCount(newCount);
+        inventory.setCount(updatedCount);
     }
 }
