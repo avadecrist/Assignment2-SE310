@@ -31,7 +31,7 @@ public class CommandProcessor implements CommandAPI  {
         while (matcher.find())
             tokens.add(matcher.group(1).replace("\"", ""));
 
-        System.out.println(">>> Processing DSL : " + commandBefore);
+        System.out.println(">>> Processing DSL : " + commandBefore); 
 
         String command = commandBefore.trim().replaceAll(" +", " ");
 
