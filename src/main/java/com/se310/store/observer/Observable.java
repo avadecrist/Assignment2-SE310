@@ -10,9 +10,24 @@ package com.se310.store.observer;
  * @since   2025-09-25
  */
 public interface Observable {
+    
+    // Observer Registration
+    /**
+     * @param observer The observer to register
+     */
+    void registerObserver(Observer observer);
 
-    //TODO: Define Observer registration
-    //TODO: Define Observer removal
-    //TODO: Define Observer notification
+    // Observer Removal
+    /**
+     * @param observer The observer to remove
+     */
+    void removeObserver(Observer observer);
+
+    // Observer Notification
+    /**
+     * @param eventType Event that occured to change state of device
+     * @param message Description of event
+     */
+    void notifyObservers(String eventType, String message);
 
 }
