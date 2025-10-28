@@ -148,16 +148,9 @@ public class Inventory {
      * @throws StoreException
      */
     synchronized public void updateInventory(int count) throws StoreException {
-
+        // Inventory is updated based on the strategy pattern configured for this inventory
         this.executeStrategy(count);
         
-
-// HAD THIS BEFORE STRATEGY PATTERN IMPLEMENTATION
-        // if(count < 0 || (this.count + count) > capacity)
-        //     throw new StoreException("Update Inventory", "Inventory Is Smaller Than O " +
-        //             "or Larger Than Shelf Capacity");
-
-        // this.count = this.count + count;
     }
 
     /**
