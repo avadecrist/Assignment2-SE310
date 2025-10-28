@@ -7,7 +7,7 @@ import com.se310.store.model.*;
 
 /**
  * This is the main service of the system implementing ommand API for processing CLI commands and
- * rvice API for processing Store events
+ * Service API for processing Store events
  *
  * @author  Sergey L. Sundukovskiy
  * @version 1.0
@@ -16,6 +16,9 @@ import com.se310.store.model.*;
 public class StoreService {
 
     //TODO: Implement Thread Safe Double-Checked Locking Singleton Pattern
+    private static StoreService instance; // singleton instance
+    private StoreService() { } // private constructor
+
 
     private static final Map<String, Store> storeMap;
     private static final Map<String, Customer> customerMap;
@@ -33,6 +36,21 @@ public class StoreService {
         inventoryMap = new HashMap<>();
         basketMap = new HashMap<>();
         deviceMap = new HashMap<>();
+    }
+
+    // Thread Safe Double-Checked Locking Singleton Accessor
+    public static StoreService getInstance() {
+        StoreService result = instance;
+        if (result == null) {
+            synchronized (StoreService.class) {
+                result = instance;
+                if (result == null) {
+                    result = new StoreService();
+                    instance = result;
+                }
+            }
+        }
+        return result;
     }
 
 
