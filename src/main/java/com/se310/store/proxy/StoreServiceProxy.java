@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-// import com.se310.store.model.StoreException;
 import com.se310.store.singleton.StoreService;
 import com.se310.store.model.*; 
 
@@ -194,7 +193,7 @@ public class StoreServiceProxy {
         return real.showBasket(basketId, token);
     }
 
-     public Device provisionDevice(String deviceId, String name, String deviceType, String storeId,
+    public Device provisionDevice(String deviceId, String name, String deviceType, String storeId,
                                   String aisleNumber, String token) throws StoreException {
         assertAuthorized(token, "Provision Device");
         return real.provisionDevice(deviceId, name, deviceType, storeId, aisleNumber, token);

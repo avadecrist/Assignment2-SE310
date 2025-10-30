@@ -18,7 +18,7 @@ public class Store {
     private final Map<String, Device> deviceMap;
     private final Map<String, Customer> customerMap;
     private final Map<String, Inventory> inventoryMap;
-    private final Map<String, Basket> basketMap;
+    private final Map<String, Basket> basketMap; 
 
     /**
      * Constructor for the Store class

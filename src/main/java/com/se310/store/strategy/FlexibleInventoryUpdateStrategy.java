@@ -37,7 +37,7 @@ public class FlexibleInventoryUpdateStrategy implements InventoryUpdateStrategy 
 
     
         double flexibleCapacity = inventory.getCapacity() * 1.2; 
-        //int capacity = inventory.setCapacity(flexibleCapacity);
+        
         int currentCount = inventory.getCount();
         int updatedCount = currentCount + addedCount;
 
