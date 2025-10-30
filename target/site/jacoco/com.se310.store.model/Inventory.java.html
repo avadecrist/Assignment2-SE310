@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Inventory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment2</a> &gt; <a href="index.source.html" class="el_package">com.se310.store.model</a> &gt; <span class="el_source">Inventory.java</span></div><h1>Inventory.java</h1><pre class="source lang-java linenums">package com.se310.store.model;
+// added for strategy pattern
+import com.se310.store.strategy.InventoryUpdateStrategy;
+import com.se310.store.strategy.StandardInventoryUpdateStrategy;
+import com.se310.store.strategy.FlexibleInventoryUpdateStrategy;
+
+/**
+ * Inventory class implementation representing inventory on the shelf of the store
+ *
+ * @author  Sergey L. Sundukovskiy
+ * @version 1.0
+ * @since   2025-09-25
+ */
+public class Inventory {
+
+    private String id;
+    private InventoryLocation inventoryLocation;
+    private int capacity;
+    private int count;
+    private String productId;
+    private InventoryType type;
+    // added for strategy pattern
+    private InventoryUpdateStrategy strategy;
+
+    /**
+     * Constructor for the Inventory class
+     * @param id
+     * @param inventoryLocation
+     * @param capacity
+     * @param count
+     * @param productId
+     * @param type
+     */
+<span class="fc" id="L34">    public Inventory(String id, InventoryLocation inventoryLocation, int capacity, int count, String productId, InventoryType type) {</span>
+<span class="fc" id="L35">        this.id = id;</span>
+<span class="fc" id="L36">        this.inventoryLocation = inventoryLocation;</span>
+<span class="fc" id="L37">        this.capacity = capacity;</span>
+<span class="fc" id="L38">        this.count = count;</span>
+<span class="fc" id="L39">        this.productId = productId;</span>
+<span class="fc" id="L40">        this.type = type;</span>
+        // set strategy based on inventory type
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (type == InventoryType.standard) {</span>
+<span class="fc" id="L43">            this.strategy = new StandardInventoryUpdateStrategy();</span>
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        } else if (type == InventoryType.flexible) {</span>
+<span class="fc" id="L45">            this.strategy = new FlexibleInventoryUpdateStrategy();</span>
+        }
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Getter method for Inventory id
+     * @return
+     */
+    public String getId() {
+<span class="fc" id="L54">        return id;</span>
+    }
+
+    /**
+     * Setter method for Inventory id
+     * @param id
+     */
+    public void setId(String id) {
+<span class="nc" id="L62">        this.id = id;</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Getter method for Inventory Location on the shelf of the store
+     * @return
+     */
+    public InventoryLocation getInventoryLocation() {
+<span class="nc" id="L70">        return inventoryLocation;</span>
+    }
+
+    /**
+     * Setter method for Inventory Location on the shelf of the store
+     * @param inventoryLocation
+     */
+    public void setInventoryLocation(InventoryLocation inventoryLocation) {
+<span class="nc" id="L78">        this.inventoryLocation = inventoryLocation;</span>
+<span class="nc" id="L79">    }</span>
+
+    /**
+     * Getter method for Inventory capacity on the shelf of the store
+     * @return
+     */
+    public int getCapacity() {
+<span class="fc" id="L86">        return capacity;</span>
+    }
+
+    /**
+     * Setter method for Inventory capacity on the shelf of the store
+     * @param capacity
+     */
+    public void setCapacity(int capacity) {
+<span class="nc" id="L94">        this.capacity = capacity;</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Getter method for Inventory count on the shelf of the store
+     * @return
+     */
+    public int getCount() {
+<span class="fc" id="L102">        return count;</span>
+    }
+
+    /**
+     * Setter method for Inventory count on the shelf of the store
+     * @param count
+     */
+    public void setCount(int count) {
+<span class="fc" id="L110">        this.count = count;</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Getter method for the Product associated with the Inventory item
+     * @return
+     */
+    public String getProductId() {
+<span class="fc" id="L118">        return productId;</span>
+    }
+
+    /**
+     * Setter method for the Product associated with the Inventory item
+     * @param productId
+     */
+    public void setProductId(String productId) {
+<span class="nc" id="L126">        this.productId = productId;</span>
+<span class="nc" id="L127">    }</span>
+
+    /**
+     * Executes the update using whatever strategy is configured
+     * @param addedCount
+     */
+    public void executeStrategy(int addedCount) throws StoreException {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (strategy == null) {</span>
+<span class="nc" id="L135">            throw new StoreException(</span>
+                &quot;executeStrategy&quot;,
+                &quot;No InventoryUpdateStrategy configured for this inventory.&quot;
+            );
+        }
+<span class="fc" id="L140">        strategy.updateQuantity(this, addedCount);</span>
+<span class="fc" id="L141">    }</span>
+
+    /**
+     * Method for updating (incrementing or decrementing) Inventory on the shelf of the store.
+     * Throws StoreException if count does not stay within allowable bounds.
+     * Method is synchronized to avoid a race condition
+     * @param count
+     * @throws StoreException
+     */
+    synchronized public void updateInventory(int count) throws StoreException {
+
+<span class="fc" id="L152">        this.executeStrategy(count);</span>
+        
+
+// HAD THIS BEFORE STRATEGY PATTERN IMPLEMENTATION
+        // if(count &lt; 0 || (this.count + count) &gt; capacity)
+        //     throw new StoreException(&quot;Update Inventory&quot;, &quot;Inventory Is Smaller Than O &quot; +
+        //             &quot;or Larger Than Shelf Capacity&quot;);
+
+        // this.count = this.count + count;
+<span class="fc" id="L161">    }</span>
+
+    /**
+     * Getter method for Inventory type
+     * @return The inventory type enum value
+     */
+    public InventoryType getType() {
+<span class="fc" id="L168">        return type;</span>
+    }
+
+    /**
+     * Sets the type of the inventory item.
+     *
+     * @param type The inventory type to set. Accepts an {@code InventoryType} enumeration value.
+     */
+    public void setType(InventoryType type) {
+<span class="nc" id="L177">        this.type = type;</span>
+<span class="nc" id="L178">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L182">        return &quot;Inventory{&quot; +</span>
+                &quot;id='&quot; + id + '\'' +
+                &quot;, inventoryLocation=&quot; + inventoryLocation +
+                &quot;, capacity=&quot; + capacity +
+                &quot;, count=&quot; + count +
+                &quot;, productId='&quot; + productId + '\'' +
+                &quot;, type='&quot; + type + '\'' +
+                '}';
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
