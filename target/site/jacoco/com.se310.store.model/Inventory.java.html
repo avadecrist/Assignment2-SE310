@@ -148,24 +148,17 @@ public class Inventory {
      * @throws StoreException
      */
     synchronized public void updateInventory(int count) throws StoreException {
-
+        // Inventory is updated based on the strategy pattern configured for this inventory
 <span class="fc" id="L152">        this.executeStrategy(count);</span>
         
-
-// HAD THIS BEFORE STRATEGY PATTERN IMPLEMENTATION
-        // if(count &lt; 0 || (this.count + count) &gt; capacity)
-        //     throw new StoreException(&quot;Update Inventory&quot;, &quot;Inventory Is Smaller Than O &quot; +
-        //             &quot;or Larger Than Shelf Capacity&quot;);
-
-        // this.count = this.count + count;
-<span class="fc" id="L161">    }</span>
+<span class="fc" id="L154">    }</span>
 
     /**
      * Getter method for Inventory type
      * @return The inventory type enum value
      */
     public InventoryType getType() {
-<span class="fc" id="L168">        return type;</span>
+<span class="fc" id="L161">        return type;</span>
     }
 
     /**
@@ -174,12 +167,12 @@ public class Inventory {
      * @param type The inventory type to set. Accepts an {@code InventoryType} enumeration value.
      */
     public void setType(InventoryType type) {
-<span class="nc" id="L177">        this.type = type;</span>
-<span class="nc" id="L178">    }</span>
+<span class="nc" id="L170">        this.type = type;</span>
+<span class="nc" id="L171">    }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L182">        return &quot;Inventory{&quot; +</span>
+<span class="fc" id="L175">        return &quot;Inventory{&quot; +</span>
                 &quot;id='&quot; + id + '\'' +
                 &quot;, inventoryLocation=&quot; + inventoryLocation +
                 &quot;, capacity=&quot; + capacity +

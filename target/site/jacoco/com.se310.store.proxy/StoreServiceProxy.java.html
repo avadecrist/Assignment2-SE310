@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StoreServiceProxy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">assignment2</a> &gt; <a href="index.source.html" class="el_package">com.se310.store.proxy</a> &gt; <span class="el_source">StoreServiceProxy.java</span></div><h1>StoreServiceProxy.java</h1><pre class="source lang-java linenums">package com.se310.store.proxy;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.se310.store.singleton.StoreService;
+import com.se310.store.model.*; 
+
 /**
  * Proxy Pattern implementation for the StoreService
  * The Proxy Pattern provides a surrogate or placeholder for another object to control access to it
@@ -9,8 +16,203 @@
  * @version 1.0
  * @since   2025-09-25
  */
-<span class="nc" id="L12">public class StoreServiceProxy {</span>
+public class StoreServiceProxy {
 
     //TODO: Implement Proxy Pattern allowing command execution only with a valid token
+    
+    // Make the proxy itself a singleton as well
+    private static StoreServiceProxy instance;
+
+    /**
+     * Accessor for the proxy singleton
+     */
+    public static StoreServiceProxy getInstance() {
+<span class="fc" id="L30">        StoreServiceProxy result = instance;</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (result == null) {</span>
+<span class="fc" id="L32">            synchronized (StoreServiceProxy.class) {</span>
+<span class="fc" id="L33">                result = instance;</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                if (result == null) {</span>
+<span class="fc" id="L35">                    result = new StoreServiceProxy();</span>
+<span class="fc" id="L36">                    instance = result;</span>
+<span class="fc" id="L37">                    System.out.println(&quot;&gt;&gt;&gt; StoreServiceProxy instance created.&quot;);</span>
+                }
+<span class="fc" id="L39">            }</span>
+        }
+<span class="fc" id="L41">        return result;</span>
+    }
+
+    // Reference to the real subject
+<span class="fc" id="L45">    private final StoreService real = StoreService.getInstance();</span>
+
+<span class="fc" id="L47">    private StoreServiceProxy() { } // private constructor</span>
+
+    // Set of valid tokens
+<span class="fc" id="L50">    private final Set&lt;String&gt; validTokens = Collections.synchronizedSet(new HashSet&lt;&gt;());</span>
+
+
+    /* ------------------------- Token management API ------------------------- */
+
+    /**
+     * Register a token.
+     */
+    public void registerToken(String token) {
+<span class="pc bpc" id="L59" title="2 of 4 branches missed.">        if (token != null &amp;&amp; !token.isBlank()) {</span>
+<span class="fc" id="L60">            validTokens.add(token);</span>
+        }
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Revoke a previously registered token.
+     */
+    public void revokeToken(String token) {
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (token != null) {</span>
+<span class="nc" id="L69">            validTokens.remove(token);</span>
+        }
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Basic guard to ensure a request is authorized before delegating.
+     */
+    private void assertAuthorized(String token, String action) throws StoreException {
+<span class="pc bpc" id="L77" title="3 of 6 branches missed.">        if (token == null || token.isBlank() || !validTokens.contains(token)) {</span>
+<span class="nc" id="L78">            throw new StoreException(action, &quot;Unauthorized: invalid or missing token&quot;);</span>
+        }
+<span class="fc" id="L80">    }</span>
+
+    /* ---------------------- Proxied operations -------------------- */
+
+    public Store provisionStore(String storeId, String name, String address, String token)
+            throws StoreException {
+<span class="fc" id="L86">        assertAuthorized(token, &quot;Provision Store&quot;);</span>
+<span class="fc" id="L87">        return real.provisionStore(storeId, name, address, token);</span>
+    }
+
+    public Store showStore(String storeId, String token) throws StoreException {
+<span class="fc" id="L91">        assertAuthorized(token, &quot;Show Store&quot;);</span>
+<span class="fc" id="L92">        return real.showStore(storeId, token);</span>
+    }
+
+    public Aisle provisionAisle(String storeId, String aisleNumber, String name, String description,
+                                AisleLocation location, String token) throws StoreException {
+<span class="fc" id="L97">        assertAuthorized(token, &quot;Provision Aisle&quot;);</span>
+<span class="fc" id="L98">        return real.provisionAisle(storeId, aisleNumber, name, description, location, token);</span>
+    }  
+
+    public Aisle showAisle(String storeId,  String aisleNumber, String token) throws StoreException {
+<span class="fc" id="L102">        assertAuthorized(token, &quot;Show Aisle&quot;);</span>
+<span class="fc" id="L103">        return real.showAisle(storeId, aisleNumber, token);</span>
+    }
+
+    public Shelf provisionShelf(String storeId, String aisleNumber, String shelfId, String name,
+                                ShelfLevel level, String description, Temperature temperature, String token) throws StoreException {
+<span class="fc" id="L108">        assertAuthorized(token, &quot;Provision Shelf&quot;);</span>
+<span class="fc" id="L109">        return real.provisionShelf(storeId, aisleNumber, shelfId, name, level, description, temperature, token);</span>
+    }
+
+    public Shelf showShelf(String storeId, String aisleNumber, String shelfId, String token) throws StoreException {
+<span class="fc" id="L113">        assertAuthorized(token, &quot;Show Shelf&quot;);</span>
+<span class="fc" id="L114">        return real.showShelf(storeId, aisleNumber, shelfId, token);</span>
+    }
+
+    public Inventory provisionInventory(String inventoryId, String storeId, String aisleNumber, String shelfId,
+                                        int capacity, int count, String productId, InventoryType type, String token) throws StoreException {
+<span class="fc" id="L119">        assertAuthorized(token, &quot;Provision Inventory&quot;);</span>
+<span class="fc" id="L120">        return real.provisionInventory(inventoryId, storeId, aisleNumber, shelfId, capacity, count, productId, type, token);</span>
+    }
+
+    public Inventory showInventory(String inventoryId, String token) throws StoreException {
+<span class="fc" id="L124">        assertAuthorized(token, &quot;Show Inventory&quot;);</span>
+<span class="fc" id="L125">        return real.showInventory(inventoryId, token);</span>
+    }
+
+    public Inventory updateInventory(String inventoryId, int count, String token) throws StoreException {
+<span class="fc" id="L129">        assertAuthorized(token, &quot;Update Inventory&quot;);</span>
+<span class="fc" id="L130">        return real.updateInventory(inventoryId, count, token);</span>
+    }
+
+    public Product provisionProduct(String productId, String name, String description, String size, String category,
+                                    double price, Temperature temperature, String token) throws StoreException {
+<span class="fc" id="L135">        assertAuthorized(token, &quot;Provision Product&quot;);</span>
+<span class="fc" id="L136">        return real.provisionProduct(productId, name, description, size, category, price, temperature, token);</span>
+    }
+
+    public Product showProduct(String productId, String token) throws StoreException {
+<span class="fc" id="L140">        assertAuthorized(token, &quot;Show Product&quot;);</span>
+<span class="fc" id="L141">        return real.showProduct(productId, token);</span>
+    }
+
+    public Customer provisionCustomer(String customerId, String firstName, String lastName,
+                                      CustomerType type, String email, String address, String token) throws StoreException {
+<span class="fc" id="L146">        assertAuthorized(token, &quot;Provision Customer&quot;);</span>
+<span class="fc" id="L147">        return real.provisionCustomer(customerId, firstName, lastName, type, email, address, token);</span>
+    }
+
+    public Customer updateCustomer(String customerId, String storeId, String aisleNumber, String token) throws StoreException {
+<span class="fc" id="L151">        assertAuthorized(token, &quot;Update Customer&quot;);</span>
+<span class="fc" id="L152">        return real.updateCustomer(customerId, storeId, aisleNumber, token);</span>
+    }
+
+    public Customer showCustomer(String customerId, String token) throws StoreException {
+<span class="fc" id="L156">        assertAuthorized(token, &quot;Show Customer&quot;);</span>
+<span class="fc" id="L157">        return real.showCustomer(customerId, token);</span>
+    }
+
+    public Basket provisionBasket(String basketId, String token) throws StoreException {
+<span class="fc" id="L161">        assertAuthorized(token, &quot;Provision Basket&quot;);</span>
+<span class="fc" id="L162">        return real.provisionBasket(basketId, token);</span>
+    }
+
+    public Basket assignCustomerBasket(String customerId, String basketId, String token) throws StoreException {
+<span class="fc" id="L166">        assertAuthorized(token, &quot;Assign Customer Basket&quot;);</span>
+<span class="fc" id="L167">        return real.assignCustomerBasket(customerId, basketId, token);</span>
+    }
+
+    public Basket getCustomerBasket(String customerId, String token) throws StoreException {
+<span class="fc" id="L171">        assertAuthorized(token, &quot;Get Customer Basket&quot;);</span>
+<span class="fc" id="L172">        return real.getCustomerBasket(customerId, token);</span>
+    }
+
+    public Basket addBasketProduct(String basketId, String productId, int count, String token)
+            throws StoreException {
+<span class="fc" id="L177">        assertAuthorized(token, &quot;Add Basket Product&quot;);</span>
+<span class="fc" id="L178">        return real.addBasketProduct(basketId, productId, count, token);</span>
+    }
+
+    public Basket removeBasketProduct(String basketId, String productId, int count, String token) throws StoreException {
+<span class="fc" id="L182">        assertAuthorized(token, &quot;Remove Basket Product&quot;);</span>
+<span class="nc" id="L183">        return real.removeBasketProduct(basketId, productId, count, token);</span>
+    }
+
+    public Basket clearBasket(String basketId, String token) throws StoreException {
+<span class="fc" id="L187">        assertAuthorized(token, &quot;Clear Basket&quot;);</span>
+<span class="nc" id="L188">        return real.clearBasket(basketId, token);</span>
+    }
+
+    public Basket showBasket(String basketId, String token) throws StoreException {
+<span class="fc" id="L192">        assertAuthorized(token, &quot;Show Basket&quot;);</span>
+<span class="fc" id="L193">        return real.showBasket(basketId, token);</span>
+    }
+
+    public Device provisionDevice(String deviceId, String name, String deviceType, String storeId,
+                                  String aisleNumber, String token) throws StoreException {
+<span class="fc" id="L198">        assertAuthorized(token, &quot;Provision Device&quot;);</span>
+<span class="fc" id="L199">        return real.provisionDevice(deviceId, name, deviceType, storeId, aisleNumber, token);</span>
+    }
+
+    public Device showDevice(String deviceId, String token) throws StoreException {
+<span class="fc" id="L203">        assertAuthorized(token, &quot;Show Device&quot;);</span>
+<span class="fc" id="L204">        return real.showDevice(deviceId, token);</span>
+    }
+
+    public void raiseEvent(String deviceId, String event, String token) throws StoreException {
+<span class="fc" id="L208">        assertAuthorized(token, &quot;Raise Event&quot;);</span>
+<span class="fc" id="L209">        real.raiseEvent(deviceId, event, token);</span>
+<span class="fc" id="L210">    }</span>
+
+    public void issueCommand(String deviceId, String command, String token) throws StoreException {
+<span class="fc" id="L213">        assertAuthorized(token, &quot;Issue Command&quot;);</span>
+<span class="fc" id="L214">        real.issueCommand(deviceId, command, token);</span>
+<span class="fc" id="L215">    }</span>
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

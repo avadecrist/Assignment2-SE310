@@ -1,8 +1,5 @@
 package com.se310.store.observer;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  * Concrete Observer that logs device events to console
  *
@@ -10,8 +7,14 @@ import java.time.format.DateTimeFormatter;
  * @version 1.0
  * @since   2025-09-25
  */
-public class EventLogger {
+public class EventLogger implements Observer {
 
     //TODO: Implement Event Logger to log device events to console
-
+    @Override
+    public void update(String deviceId, String eventType, String message) {
+        if (message == null && eventType == null){
+            return;
+        }
+        System.out.println("[EventLogger] Device "+deviceId +" | Event: "+eventType + " | Message: "+message);
+    }
 }

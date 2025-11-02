@@ -14,19 +14,41 @@ import java.util.List;
  * @version 1.0
  * @since   2025-09-25
  */
-public abstract class Device {
+public abstract class Device implements Observable {
 
     //TODO: Implement Observable interface
-    //TODO: Implement Observer storage
-    //TODO: Implement Observer registration
-    //TODO: Implement Observer removal
-    //TODO: Implement Observer notification
+    
 
+    //TODO: Implement Observer storage
+    private List<Observer> observers;
     private String id;
     private String name;
     private StoreLocation storeLocation;
     private String type;
-    private final List<Observer> observers;
+
+    //TODO: Implement Observer registration
+    @Override
+    public void registerObserver(Observer o) {
+        if (o != null && !observers.contains(o)) {
+            observers.add(o);
+        }
+    }
+    //TODO: Implement Observer removal
+    @Override
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+    //TODO: Implement Observer notification
+    @Override
+    public void notifyObservers(String eventType, String message) {
+        for (Observer observer : observers) {
+            observer.update(id, eventType, message);
+        }
+    }
+
+    protected void triggerEvent(String eventType, String message) {
+        notifyObservers(eventType, message);
+    }
 
     /**
      * Constructor for the Device class
